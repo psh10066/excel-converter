@@ -1,5 +1,6 @@
 package com.psh10066.excelconverter.util;
 
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -24,18 +25,10 @@ public class ExcelReader {
 
         List<List<String>> rows = new ArrayList<>();
 
+        DataFormatter dataFormatter = new DataFormatter();
         sheet.rowIterator().forEachRemaining(row -> {
             List<String> cells = new ArrayList<>();
-            row.cellIterator().forEachRemaining(cell -> {
-                String value = "";
-                switch (cell.getCellType()) {
-                    case BOOLEAN -> value = String.valueOf(cell.getBooleanCellValue());
-                    case NUMERIC -> value = String.valueOf(cell.getNumericCellValue());
-                    case STRING -> value = cell.getStringCellValue();
-                    case FORMULA -> value = cell.getCellFormula();
-                }
-                cells.add(value.trim());
-            });
+            row.cellIterator().forEachRemaining(cell -> cells.add(dataFormatter.formatCellValue(cell).trim()));
             rows.add(cells);
         });
 
