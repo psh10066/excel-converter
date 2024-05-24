@@ -45,4 +45,20 @@ public class OracleController {
         String fileName = tableName + ".sql";
         return ResponseUtil.fileResponse(fileName, MediaType.TEXT_PLAIN, query.getBytes());
     }
+
+    @Operation(summary = "Excel to oracle update query", description = "Excel to oracle update query",
+        responses = @ApiResponse(responseCode = "200", description = "Oracle update query",
+            content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE, schema = @Schema(implementation = String.class))
+        )
+    )
+    @PostMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<InputStreamResource> update(@Parameter(description = "Table name") @RequestPart String tableName,
+                                                      @Parameter(description = "Excel file to be read") @RequestPart MultipartFile file) throws IOException {
+
+        ExcelRecord record = new ExcelReader().read(file.getInputStream());
+        String query = sqlConverter.update(tableName, record);
+
+        String fileName = tableName + ".sql";
+        return ResponseUtil.fileResponse(fileName, MediaType.TEXT_PLAIN, query.getBytes());
+    }
 }
