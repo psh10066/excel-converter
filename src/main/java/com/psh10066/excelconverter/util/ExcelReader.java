@@ -28,7 +28,9 @@ public class ExcelReader {
         DataFormatter dataFormatter = new DataFormatter();
         sheet.rowIterator().forEachRemaining(row -> {
             List<String> cells = new ArrayList<>();
-            row.cellIterator().forEachRemaining(cell -> cells.add(dataFormatter.formatCellValue(cell).trim()));
+            for (int i = 0; i < row.getLastCellNum(); i++) {
+                cells.add(dataFormatter.formatCellValue(row.getCell(i)).strip());
+            }
             rows.add(cells);
         });
 
