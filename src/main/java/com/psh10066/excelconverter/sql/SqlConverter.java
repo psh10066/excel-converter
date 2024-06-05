@@ -2,10 +2,16 @@ package com.psh10066.excelconverter.sql;
 
 import com.psh10066.excelconverter.sql.type.DBMSType;
 import com.psh10066.excelconverter.util.ExcelRecord;
+import com.psh10066.excelconverter.util.ExcelWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -78,5 +84,41 @@ public class SqlConverter {
         } else {
             return "null";
         }
+    }
+
+    public byte[] insertExcel(InputStream inputStream) {
+
+        String divider = ") VALUES (";
+        List<List<String>> data = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line = reader.readLine();
+            String header = line.substring(line.indexOf("(") + 1, line.indexOf(divider));
+            data.add(this.getRow(header));
+
+            while (line != null) {
+                String row = line.substring(line.indexOf(divider) + divider.length(), line.lastIndexOf(")"));
+                data.add(this.getRow(row));
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try (ExcelWriter writer = new ExcelWriter()) {
+            return writer.getExcelFileBytes(data);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<String> getRow(String line) {
+        return Arrays.stream(line.split(","))
+            .map(value -> {
+                value = value.strip();
+                value = value.startsWith("'") ? value.substring(1) : value;
+                value = value.endsWith("'") ? value.substring(0, value.length() - 1) : value;
+                return value;
+            }).toList();
     }
 }

@@ -61,4 +61,18 @@ public class OracleController {
         String fileName = tableName + ".sql";
         return ResponseUtil.fileResponse(fileName, MediaType.TEXT_PLAIN, query.getBytes());
     }
+
+    @Operation(summary = "Oracle insert query to excel", description = "Oracle insert query to excel",
+        responses = @ApiResponse(responseCode = "200", description = "Excel",
+            content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE, schema = @Schema(implementation = String.class))
+        )
+    )
+    @PostMapping(value = "/insert/excel", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<InputStreamResource> insertExcel(@Parameter(description = "Oracle insert query file to be read") @RequestPart MultipartFile file) throws IOException {
+
+        byte[] excel = sqlConverter.insertExcel(file.getInputStream());
+
+        String fileName = "data.xlsx";
+        return ResponseUtil.fileResponse(fileName, MediaType.APPLICATION_OCTET_STREAM, excel);
+    }
 }
