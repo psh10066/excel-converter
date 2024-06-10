@@ -107,6 +107,10 @@ public class SqlConverter {
             data.add(this.getRow(header));
 
             while (line != null) {
+                if (!StringUtils.hasText(line)) {
+                    line = reader.readLine();
+                    continue;
+                }
                 String row = line.substring(line.indexOf(divider) + divider.length(), line.lastIndexOf(")"));
                 data.add(this.getRow(row));
                 line = reader.readLine();
