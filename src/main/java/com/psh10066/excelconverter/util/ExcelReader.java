@@ -1,9 +1,6 @@
 package com.psh10066.excelconverter.util;
 
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.IOUtils;
 
 import java.io.IOException;
@@ -26,13 +23,16 @@ public class ExcelReader {
         List<List<String>> rows = new ArrayList<>();
 
         DataFormatter dataFormatter = new DataFormatter();
-        sheet.rowIterator().forEachRemaining(row -> {
+        for (int i = 0; i < sheet.getLastRowNum(); i++) {
             List<String> cells = new ArrayList<>();
-            for (int i = 0; i < row.getLastCellNum(); i++) {
-                cells.add(dataFormatter.formatCellValue(row.getCell(i)).strip());
+            Row row = sheet.getRow(i);
+            if (row != null) {
+                for (int j = 0; j < row.getLastCellNum(); j++) {
+                    cells.add(dataFormatter.formatCellValue(row.getCell(j)).strip());
+                }
             }
             rows.add(cells);
-        });
+        }
 
         List<String> headers = rows.removeFirst();
         return new ExcelRecord(headers, rows);

@@ -30,6 +30,11 @@ public class SqlConverter {
 
         StringBuilder query = new StringBuilder();
         for (List<String> row : record.rows()) {
+            if (row.isEmpty() || !StringUtils.hasText(row.get(0))) {
+                query
+                    .append("\n");
+                continue;
+            }
             row = new ArrayList<>(row.stream()
                 .map(this::getValue)
                 .toList());
@@ -56,6 +61,11 @@ public class SqlConverter {
 
         StringBuilder query = new StringBuilder();
         for (List<String> row : record.rows()) {
+            if (row.isEmpty() || !StringUtils.hasText(row.get(0))) {
+                query
+                    .append("\n");
+                continue;
+            }
 
             List<String> setList = new ArrayList<>();
             for (int i = 0; i < splitIndex; i++) {
