@@ -21,6 +21,17 @@ public class ExcelWriter implements AutoCloseable {
         this.outputStream = new ByteArrayOutputStream();
     }
 
+    public ExcelWriter(Workbook workbook) {
+        this.workbook = workbook;
+        this.sheet = workbook.createSheet();
+        this.outputStream = new ByteArrayOutputStream();
+    }
+
+    public byte[] getExcelFileBytes() throws IOException {
+        workbook.write(outputStream);
+        return outputStream.toByteArray();
+    }
+
     public byte[] getExcelFileBytes(List<List<String>> data) throws IOException {
         this.writeLinesToExcel(data);
         workbook.write(outputStream);
