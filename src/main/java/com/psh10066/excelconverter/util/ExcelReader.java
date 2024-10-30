@@ -30,7 +30,7 @@ public class ExcelReader {
 
         List<List<String>> rows = new ArrayList<>();
 
-        for (int i = 0; i < sheet.getLastRowNum(); i++) {
+        for (int i = 0; i <= sheet.getLastRowNum(); i++) {
             List<String> cells = new ArrayList<>();
             Row row = sheet.getRow(i);
             if (row != null) {
